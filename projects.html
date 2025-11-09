@@ -6,14 +6,14 @@
 <title>პროექტები - ლუკა სულავა</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  .projects { padding: 2rem; max-width: 1000px; margin: auto; }
-  .project-list { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
-  .project { background: white; border-radius: 15px; padding: 1rem; max-width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
-             text-align: center; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; }
-  .project.visible { opacity: 1; transform: translateY(0); }
-  .project:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-  .project img { max-width: 100%; border-radius: 10px; margin-bottom: 0.5rem; }
-  h2 { text-align:center; margin-bottom:2rem; }
+.projects { padding: 2rem; max-width: 1000px; margin: auto; }
+.project-list { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
+.project { background: white; border-radius: 15px; padding: 1rem; max-width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+           text-align: center; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; cursor: pointer; }
+.project.visible { opacity: 1; transform: translateY(0); }
+.project:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+.project img { max-width: 100%; border-radius: 10px; margin-bottom: 0.5rem; }
+h2 { text-align:center; margin-bottom:2rem; }
 </style>
 </head>
 <body>
@@ -48,8 +48,13 @@ function loadProjects() {
     const div = document.createElement("div");
     div.classList.add("project");
 
+    // при клике переходим по ссылке
+    div.addEventListener('click', () => {
+      if(p.link) window.open(p.link, '_blank');
+    });
+
     const img = document.createElement("img");
-    img.src = p.img || "placeholder.jpg"; // можно ввести ссылку на любое изображение
+    img.src = p.img || "placeholder.jpg";
     img.alt = p.title;
 
     const h3 = document.createElement("h3");
@@ -63,7 +68,7 @@ function loadProjects() {
     div.appendChild(pDesc);
     list.appendChild(div);
 
-    setTimeout(() => div.classList.add("visible"), i*150); // плавное появление
+    setTimeout(() => div.classList.add("visible"), i*150);
   });
 }
 

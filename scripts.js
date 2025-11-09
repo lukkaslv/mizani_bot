@@ -1,105 +1,94 @@
 let GOAL_STEPS = ["name", "specific", "measureable", "achievable", "relevant", "timebound", "plan"];
 let PROMPTS = {
-    name: "📝 შეიყვანეთ თქვენი მიზანის სახელი:",
-    specific: "🎯 S: კონკრეტულად რას მინდა მივაღწიო?",
-    measureable: "📊 M: როგორ მივხვდები, რომ მივაღწიე მიზანს?",
-    achievable: "✅ A: რეალურია ეს მიზანი ჩემთვის თუ არა?",
-    relevant: "💖 R: რატომ არის ეს მიზანი ჩემთვის მნიშვნელოვანი?",
-    timebound: "⏰ T: როდის მინდა რომ მივაღწიო ამ მიზანს?",
-    plan: "🛠️ აღწერეთ სამოქმედო გეგმა"
+  name: "📝 შეიყვანეთ თქვენი მიზანის სახელი:",
+  specific: "🎯 S: კონკრეტულად რას მინდა მივაღწიო?",
+  measureable: "📊 M: როგორ მივხვდები, რომ მივაღწიე მიზანს?",
+  achievable: "✅ A: რეალურია ეს მიზანი ჩემთვის თუ არა?",
+  relevant: "💖 R: რატომ არის ეს მიზანი ჩემთვის მნიშვნელოვანი?",
+  timebound: "⏰ T: როდის მინდა რომ მივაღწიო ამ მიზანს?",
+  plan: "🛠️ აღწერეთ სამოქმედო გეგმა"
 };
 let SMART_EXAMPLES = {
-    name: "მაგალითი: 'ფიზიკური ფორმის გაუმჯობესება 3 თვეში'",
-    specific: "მაგალითი: 'ვიქნები ვარჯიშში 3 დღე კვირაში, 30 წუთი'",
-    measureable: "მაგალითი: '5 კმ გავირბენ უპრობლემოდ'",
-    achievable: "მაგალითი: 'ჩემთვის ეს რეალურია'",
-    relevant: "მაგალითი: 'ჯანმრთელობა მნიშვნელოვანია'",
-    timebound: "მაგალითი: '3 თვის შემდეგ'",
-    plan: "მაგალითი: 'ვაკეტავ განრიგს, ვადევნებ პროგრესს'"
+  name: "მაგალითი: 'ფიზიკური ფორმის გაუმჯობესება 3 თვეში'",
+  specific: "მაგალითი: 'ვიქნები ვარჯიშში 3 დღე კვირაში, 30 წუთი'",
+  measureable: "მაგალითი: '5 კმ გავირბენ უპრობლემოდ'",
+  achievable: "მაგალითი: 'ჩემთვის ეს რეალურია'",
+  relevant: "მაგალითი: 'ჯანმრთელობა მნიშვნელოვანია'",
+  timebound: "მაგალითი: '3 თვის შემდეგ'",
+  plan: "მაგალითი: 'ვაკეტავ განრიგს, ვადევნებ პროგრესს'"
 };
 
 let currentGoal = {};
 let stepIndex = 0;
 let goals = [];
 
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector(".start-goal").addEventListener("click", startGoal);
+  document.querySelector(".show-goals").addEventListener("click", showGoals);
+});
+
 function startGoal() {
-    stepIndex = 0;
-    currentGoal = {};
-    showStep();
+  stepIndex = 0;
+  currentGoal = {};
+  showStep();
 }
 
 function showStep() {
-    const step = GOAL_STEPS[stepIndex];
-    const prompt = PROMPTS[step];
-    const example = SMART_EXAMPLES[step];
+  const step = GOAL_STEPS[stepIndex];
+  const prompt = PROMPTS[step];
+  const example = SMART_EXAMPLES[step];
 
-    document.getElementById("game-container").innerHTML = `
-        <h2 class="fade-in">${prompt}</h2>
-        <input class="fade-in" type="text" id="goal-input" placeholder="${example}" />
-        <div class="buttons">
-            <button class="submit-step fade-in">დახარისხება</button>
-        </div>
-    `;
+  document.getElementById("game-container").innerHTML = `
+    <h2>${prompt}</h2>
+    <input type="text" id="goal-input" placeholder="${example}" />
+    <div class="buttons">
+      <button id="submit-step">დახარისხება</button>
+    </div>
+  `;
 
-    // Назначаем обработчик кнопке после перерисовки
-    document.querySelector(".submit-step").addEventListener("click", submitStep);
+  document.getElementById("submit-step").addEventListener("click", submitStep);
 }
 
 function submitStep() {
-    const input = document.getElementById("goal-input").value.trim();
-    if(input === "") { 
-        alert("გთხოვთ შეავსოთ ველი!");
-        return;
-    }
+  const input = document.getElementById("goal-input").value.trim();
+  if(input === "") { alert("გთხოვთ შეავსოთ ველი!"); return; }
 
-    const step = GOAL_STEPS[stepIndex];
-    currentGoal[step] = input;
+  const step = GOAL_STEPS[stepIndex];
+  currentGoal[step] = input;
 
-    stepIndex++;
-    if(stepIndex < GOAL_STEPS.length) {
-        showStep();
-    } else {
-        goals.push(currentGoal);
-        showGoals();
-    }
+  stepIndex++;
+  if(stepIndex < GOAL_STEPS.length) {
+    showStep();
+  } else {
+    goals.push(currentGoal);
+    showGoals();
+  }
 }
 
 function showGoals() {
-    let html = `<h2 class="fade-in">თქვენი მიზნები</h2>`;
+  let html = `<h2>თქვენი მიზნები</h2>`;
+  if(goals.length === 0) html += `<p>მიზნები ჯერ არ არის დამატებული</p>`;
+  else {
+    goals.forEach((g,i)=>{
+      html += `<div class="goal-card">
+        <strong>${i+1}. ${g.name}</strong>
+        <div class="goal-field"><strong>🎯 S:</strong> ${g.specific}</div>
+        <div class="goal-field"><strong>📊 M:</strong> ${g.measureable}</div>
+        <div class="goal-field"><strong>✅ A:</strong> ${g.achievable}</div>
+        <div class="goal-field"><strong>💖 R:</strong> ${g.relevant}</div>
+        <div class="goal-field"><strong>⏰ T:</strong> ${g.timebound}</div>
+        <div class="goal-field"><strong>🛠️ გეგმა:</strong> ${g.plan}</div>
+      </div>`;
+    });
+  }
 
-    if(goals.length === 0) {
-        html += `<p class="fade-in">მიზნები ჯერ არ არის დამატებული</p>`;
-    } else {
-        goals.forEach((g, i) => {
-            html += `
-            <div class="goal-card fade-in">
-                <strong>${i+1}. ${g.name}</strong>
-                <div class="goal-field"><strong>🎯 S:</strong> ${g.specific}</div>
-                <div class="goal-field"><strong>📊 M:</strong> ${g.measureable}</div>
-                <div class="goal-field"><strong>✅ A:</strong> ${g.achievable}</div>
-                <div class="goal-field"><strong>💖 R:</strong> ${g.relevant}</div>
-                <div class="goal-field"><strong>⏰ T:</strong> ${g.timebound}</div>
-                <div class="goal-field"><strong>🛠️ გეგმა:</strong> ${g.plan}</div>
-            </div>`;
-        });
-    }
+  html += `<div class="buttons">
+    <button class="start-goal">დამატება ახალი მიზანი</button>
+    <button class="show-goals">მიზნების ჩვენება</button>
+  </div>`;
 
-    html += `
-        <div class="buttons">
-            <button class="start-goal">დამატება ახალი მიზანი</button>
-            <button class="show-goals">მიზნების ჩვენება</button>
-        </div>
-    `;
+  document.getElementById("game-container").innerHTML = html;
 
-    document.getElementById("game-container").innerHTML = html;
-
-    // Назначаем обработчики кнопкам после перерисовки
-    document.querySelectorAll(".start-goal").forEach(btn => btn.addEventListener("click", startGoal));
-    document.querySelectorAll(".show-goals").forEach(btn => btn.addEventListener("click", showGoals));
+  document.querySelectorAll(".start-goal").forEach(btn => btn.addEventListener("click", startGoal));
+  document.querySelectorAll(".show-goals").forEach(btn => btn.addEventListener("click", showGoals));
 }
-
-// Инициализация для первых кнопок
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".start-goal").forEach(btn => btn.addEventListener("click", startGoal));
-    document.querySelectorAll(".show-goals").forEach(btn => btn.addEventListener("click", showGoals));
-});

@@ -4,12 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SMART მიზნები</title>
-
-<!-- Google Font для грузинского -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="style.css">
-
 <style>
   body {
     font-family: 'Noto Sans Georgian', sans-serif;
@@ -21,25 +16,21 @@
     align-items: flex-start;
     min-height: 100vh;
   }
-
   #game-container {
-    background: #ffffff;
+    background: #fff;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     width: 90%;
     max-width: 600px;
     margin: 40px 0;
     padding: 30px;
-    transition: all 0.3s ease;
   }
-
   h2 {
     color: #3a7bd5;
     text-align: center;
     margin-bottom: 20px;
     font-size: 28px;
   }
-
   input {
     width: 100%;
     padding: 15px;
@@ -47,15 +38,11 @@
     margin: 15px 0;
     border-radius: 10px;
     border: 2px solid #3a7bd5;
-    transition: border 0.3s ease, box-shadow 0.3s ease;
   }
-
   input:focus {
     border-color: #1a5fc1;
-    box-shadow: 0 0 10px rgba(58,123,213,0.3);
     outline: none;
   }
-
   button {
     padding: 15px 25px;
     font-size: 18px;
@@ -65,16 +52,7 @@
     color: white;
     border: none;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(58,123,213,0.3);
-    transition: all 0.3s ease;
   }
-
-  button:hover {
-    background: #1a5fc1;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(58,123,213,0.4);
-  }
-
   .goal-card {
     background: linear-gradient(135deg, #e2e8ff, #f0f4ff);
     border-left: 5px solid #3a7bd5;
@@ -82,45 +60,23 @@
     padding: 15px 20px;
     margin: 15px 0;
     word-wrap: break-word;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-
-  .goal-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
-  }
-
   .goal-field {
     margin: 5px 0;
     white-space: pre-wrap;
     word-break: break-word;
   }
-
-  .fade-in {
-    animation: fadeIn 0.5s ease forwards;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px);}
-    to { opacity: 1; transform: translateY(0);}
-  }
-
-  .buttons {
-    text-align: center;
-    margin-top: 20px;
-  }
+  .buttons { text-align: center; margin-top: 20px; }
 </style>
 </head>
 <body>
-<div id="game-container" class="fade-in">
-    <h2>SMART მიზნები</h2>
-    <div class="buttons">
-        <button class="start-goal">დამატება ახალი მიზანი</button>
-        <button class="show-goals">მიზნების ჩვენება</button>
-    </div>
+<div id="game-container">
+  <h2>SMART მიზნები</h2>
+  <div class="buttons">
+    <button class="start-goal">დამატება ახალი მიზანი</button>
+    <button class="show-goals">მიზნების ჩვენება</button>
+  </div>
 </div>
-
 <script src="script.js"></script>
 </body>
 </html>

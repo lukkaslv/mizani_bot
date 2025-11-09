@@ -4,20 +4,187 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SMART მიზნები</title>
-<link rel="stylesheet" href="style.css">
+
+<!-- Google Font для грузинского -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian&display=swap" rel="stylesheet">
+
 <style>
-  body { font-family: 'Noto Sans Georgian', sans-serif; padding: 20px; background: #fdfdfd; }
-  h2 { color: #3a7bd5; }
-  input { width: 100%; padding: 10px; margin: 10px 0; font-size: 18px; }
-  button { padding: 10px 20px; font-size: 18px; margin-top: 10px; cursor: pointer; background: #3a7bd5; color: white; border: none; border-radius: 5px; }
-  pre { background: #eee; padding: 10px; border-radius: 5px; }
+  /* Основной стиль */
+  body {
+    font-family: 'Noto Sans Georgian', sans-serif;
+    background: linear-gradient(135deg, #f0f4ff, #d9e4ff);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+
+  #game-container {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    width: 90%;
+    max-width: 600px;
+    margin: 40px 0;
+    padding: 30px;
+    transition: all 0.3s ease;
+  }
+
+  h2 {
+    color: #3a7bd5;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+
+  input {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    margin: 15px 0;
+    border-radius: 10px;
+    border: 2px solid #3a7bd5;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  input:focus {
+    border-color: #1a5fc1;
+    box-shadow: 0 0 10px rgba(58,123,213,0.3);
+    outline: none;
+  }
+
+  button {
+    padding: 15px 25px;
+    font-size: 18px;
+    margin: 10px 5px;
+    cursor: pointer;
+    background: #3a7bd5;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(58,123,213,0.3);
+    transition: all 0.3s ease;
+  }
+
+  button:hover {
+    background: #1a5fc1;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(58,123,213,0.4);
+  }
+
+  .goal-card {
+    background: #f0f4ff;
+    border-left: 5px solid #3a7bd5;
+    border-radius: 15px;
+    padding: 15px 20px;
+    margin: 15px 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .goal-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+
+  pre {
+    background: #e2e8ff;
+    padding: 10px;
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+
+  /* Анимация появления */
+  .fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px);}
+    to { opacity: 1; transform: translateY(0);}
+  }
 </style>
 </head>
 <body>
-<div id="game-container">
+<div id="game-container" class="fade-in">
+    <h2>SMART მიზნები</h2>
     <button onclick="startGoal()">დამატება ახალი მიზანი</button>
     <button onclick="showGoals()">მიზნების ჩვენება</button>
 </div>
-<script src="script.js"></script>
+
+<script>
+let GOAL_STEPS = ["name", "specific", "measureable", "achievable", "relevant", "timebound", "plan"];
+let PROMPTS = {
+    name: "📝 შეიყვანეთ თქვენი მიზანის სახელი:",
+    specific: "🎯 S: კონკრეტულად რას მინდა მივაღწიო?",
+    measureable: "📊 M: როგორ მივხვდები, რომ მივაღწიე მიზანს?",
+    achievable: "✅ A: რეალურია ეს მიზანი ჩემთვის თუ არა?",
+    relevant: "💖 R: რატომ არის ეს მიზანი ჩემთვის მნიშვნელოვანი?",
+    timebound: "⏰ T: როდის მინდა რომ მივაღწიო ამ მიზანს?",
+    plan: "🛠️ აღწერეთ სამოქმედო გეგმა"
+};
+let SMART_EXAMPLES = {
+    name: "მაგალითი: 'ფიზიკური ფორმის გაუმჯობესება 3 თვეში'",
+    specific: "მაგალითი: 'ვიქნები ვარჯიშში 3 დღე კვირაში, 30 წუთი'",
+    measureable: "მაგალითი: '5 კმ გავირბენ უპრობლემოდ'",
+    achievable: "მაგალითი: 'ჩემთვის ეს რეალურია'",
+    relevant: "მაგალითი: 'ჯანმრთელობა მნიშვნელოვანია'",
+    timebound: "მაგალითი: '3 თვის შემდეგ'",
+    plan: "მაგალითი: 'ვაკეტავ განრიგს, ვადევნებ პროგრესს'"
+};
+
+let currentGoal = {};
+let stepIndex = 0;
+let goals = [];
+
+function startGoal() {
+    stepIndex = 0;
+    currentGoal = {};
+    showStep();
+}
+
+function showStep() {
+    const step = GOAL_STEPS[stepIndex];
+    const prompt = PROMPTS[step];
+    const example = SMART_EXAMPLES[step];
+
+    document.getElementById("game-container").innerHTML = `
+        <h2 class="fade-in">${prompt}</h2>
+        <input class="fade-in" type="text" id="goal-input" placeholder="${example}" />
+        <button class="fade-in" onclick="submitStep()">დახარისხება</button>
+    `;
+}
+
+function submitStep() {
+    const input = document.getElementById("goal-input").value.trim();
+    if(input === "") { alert("გთხოვთ შეავსოთ ველი!"); return; }
+    const step = GOAL_STEPS[stepIndex];
+    currentGoal[step] = input;
+
+    stepIndex++;
+    if(stepIndex < GOAL_STEPS.length) {
+        showStep();
+    } else {
+        goals.push(currentGoal);
+        showGoals();
+    }
+}
+
+function showGoals() {
+    let html = `<h2 class="fade-in">თქვენი მიზნები</h2>`;
+    if(goals.length === 0) {
+        html += `<p class="fade-in">მიზნები ჯერ არ არის დამატებული</p>`;
+    } else {
+        goals.forEach((g, i) => {
+            html += `<div class="goal-card fade-in"><strong>${i+1}. ${g.name}</strong><pre>${JSON.stringify(g,null,2)}</pre></div>`;
+        });
+    }
+    html += `<button onclick="startGoal()">დამატება ახალი მიზანი</button>`;
+    html += `<button onclick="showGoals()">მიზნების ჩვენება</button>`;
+
+    document.getElementById("game-container").innerHTML = html;
+}
+</script>
 </body>
 </html>

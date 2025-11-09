@@ -37,14 +37,21 @@ function showStep() {
         <h2 class="fade-in">${prompt}</h2>
         <input class="fade-in" type="text" id="goal-input" placeholder="${example}" />
         <div class="buttons">
-            <button class="fade-in" onclick="submitStep()">დახარისხება</button>
+            <button class="fade-in submit-step">დახარისხება</button>
         </div>
     `;
+
+    // Назначаем событие кнопке после перерисовки
+    document.querySelector(".submit-step").addEventListener("click", submitStep);
 }
 
 function submitStep() {
     const input = document.getElementById("goal-input").value.trim();
-    if(input === "") return alert("გთხოვთ შეავსოთ ველი!");
+    if(input === "") { 
+        alert("გთხოვთ შეავსოთ ველი!");
+        return;
+    }
+
     const step = GOAL_STEPS[stepIndex];
     currentGoal[step] = input;
 
@@ -79,10 +86,21 @@ function showGoals() {
 
     html += `
         <div class="buttons">
-            <button onclick="startGoal()">დამატება ახალი მიზანი</button>
-            <button onclick="showGoals()">მიზნების ჩვენება</button>
+            <button class="start-goal">დამატება ახალი მიზანი</button>
+            <button class="show-goals">მიზნების ჩვენება</button>
         </div>
     `;
 
     document.getElementById("game-container").innerHTML = html;
+
+    // Назначаем события кнопкам после перерисовки
+    attachButtons();
 }
+
+function attachButtons() {
+    document.querySelectorAll(".start-goal").forEach(btn => btn.addEventListener("click", startGoal));
+    document.querySelectorAll(".show-goals").forEach(btn => btn.addEventListener("click", showGoals));
+}
+
+// Инициализация
+attachButtons();

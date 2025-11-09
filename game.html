@@ -8,8 +8,9 @@
 <!-- Google Font для грузинского -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian&display=swap" rel="stylesheet">
 
+<link rel="stylesheet" href="style.css">
+
 <style>
-  /* Основной стиль */
   body {
     font-family: 'Noto Sans Georgian', sans-serif;
     background: linear-gradient(135deg, #f0f4ff, #d9e4ff);
@@ -75,27 +76,27 @@
   }
 
   .goal-card {
-    background: #f0f4ff;
+    background: linear-gradient(135deg, #e2e8ff, #f0f4ff);
     border-left: 5px solid #3a7bd5;
     border-radius: 15px;
     padding: 15px 20px;
     margin: 15px 0;
+    word-wrap: break-word;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .goal-card:hover {
     transform: scale(1.02);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
   }
 
-  pre {
-    background: #e2e8ff;
-    padding: 10px;
-    border-radius: 10px;
-    overflow-x: auto;
+  .goal-field {
+    margin: 5px 0;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
-  /* Анимация появления */
   .fade-in {
     animation: fadeIn 0.5s ease forwards;
   }
@@ -104,87 +105,22 @@
     from { opacity: 0; transform: translateY(10px);}
     to { opacity: 1; transform: translateY(0);}
   }
+
+  .buttons {
+    text-align: center;
+    margin-top: 20px;
+  }
 </style>
 </head>
 <body>
 <div id="game-container" class="fade-in">
     <h2>SMART მიზნები</h2>
-    <button onclick="startGoal()">დამატება ახალი მიზანი</button>
-    <button onclick="showGoals()">მიზნების ჩვენება</button>
+    <div class="buttons">
+        <button onclick="startGoal()">დამატება ახალი მიზანი</button>
+        <button onclick="showGoals()">მიზნების ჩვენება</button>
+    </div>
 </div>
 
-<script>
-let GOAL_STEPS = ["name", "specific", "measureable", "achievable", "relevant", "timebound", "plan"];
-let PROMPTS = {
-    name: "📝 შეიყვანეთ თქვენი მიზანის სახელი:",
-    specific: "🎯 S: კონკრეტულად რას მინდა მივაღწიო?",
-    measureable: "📊 M: როგორ მივხვდები, რომ მივაღწიე მიზანს?",
-    achievable: "✅ A: რეალურია ეს მიზანი ჩემთვის თუ არა?",
-    relevant: "💖 R: რატომ არის ეს მიზანი ჩემთვის მნიშვნელოვანი?",
-    timebound: "⏰ T: როდის მინდა რომ მივაღწიო ამ მიზანს?",
-    plan: "🛠️ აღწერეთ სამოქმედო გეგმა"
-};
-let SMART_EXAMPLES = {
-    name: "მაგალითი: 'ფიზიკური ფორმის გაუმჯობესება 3 თვეში'",
-    specific: "მაგალითი: 'ვიქნები ვარჯიშში 3 დღე კვირაში, 30 წუთი'",
-    measureable: "მაგალითი: '5 კმ გავირბენ უპრობლემოდ'",
-    achievable: "მაგალითი: 'ჩემთვის ეს რეალურია'",
-    relevant: "მაგალითი: 'ჯანმრთელობა მნიშვნელოვანია'",
-    timebound: "მაგალითი: '3 თვის შემდეგ'",
-    plan: "მაგალითი: 'ვაკეტავ განრიგს, ვადევნებ პროგრესს'"
-};
-
-let currentGoal = {};
-let stepIndex = 0;
-let goals = [];
-
-function startGoal() {
-    stepIndex = 0;
-    currentGoal = {};
-    showStep();
-}
-
-function showStep() {
-    const step = GOAL_STEPS[stepIndex];
-    const prompt = PROMPTS[step];
-    const example = SMART_EXAMPLES[step];
-
-    document.getElementById("game-container").innerHTML = `
-        <h2 class="fade-in">${prompt}</h2>
-        <input class="fade-in" type="text" id="goal-input" placeholder="${example}" />
-        <button class="fade-in" onclick="submitStep()">დახარისხება</button>
-    `;
-}
-
-function submitStep() {
-    const input = document.getElementById("goal-input").value.trim();
-    if(input === "") { alert("გთხოვთ შეავსოთ ველი!"); return; }
-    const step = GOAL_STEPS[stepIndex];
-    currentGoal[step] = input;
-
-    stepIndex++;
-    if(stepIndex < GOAL_STEPS.length) {
-        showStep();
-    } else {
-        goals.push(currentGoal);
-        showGoals();
-    }
-}
-
-function showGoals() {
-    let html = `<h2 class="fade-in">თქვენი მიზნები</h2>`;
-    if(goals.length === 0) {
-        html += `<p class="fade-in">მიზნები ჯერ არ არის დამატებული</p>`;
-    } else {
-        goals.forEach((g, i) => {
-            html += `<div class="goal-card fade-in"><strong>${i+1}. ${g.name}</strong><pre>${JSON.stringify(g,null,2)}</pre></div>`;
-        });
-    }
-    html += `<button onclick="startGoal()">დამატება ახალი მიზანი</button>`;
-    html += `<button onclick="showGoals()">მიზნების ჩვენება</button>`;
-
-    document.getElementById("game-container").innerHTML = html;
-}
-</script>
+<script src="script.js"></script>
 </body>
 </html>

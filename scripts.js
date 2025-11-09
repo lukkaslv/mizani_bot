@@ -1,27 +1,26 @@
-const GOAL_STEPS = ["name", "specific", "measureable", "achievable", "relevant", "timebound", "plan"];
-const PROMPTS = {
-    "name": "📝 შეიყვანეთ თქვენი მიზნის სახელი:",
-    "specific": "🎯 S: კონკრეტულად რას მინდა მივაღწიო?",
-    "measureable": "📊 M: როგორ მივხვდები, რომ მივაღწიე მიზანს?",
-    "achievable": "✅ A: რეალურია ეს მიზანი ჩემთვის თუ არა?",
-    "relevant": "💖 R: რატომ არის ეს მიზანი ჩემთვის მნიშვნელოვანი?",
-    "timebound": "⏰ T: როდის მინდა რომ მივაღწიო ამ მიზანს?",
-    "plan": "🛠️ აღწერეთ სამოქმედო გეგმა, მიზნის მისაღწევად გადადგმული ნაბიჯები:"
+let GOAL_STEPS = ["name", "specific", "measureable", "achievable", "relevant", "timebound", "plan"];
+let PROMPTS = {
+    name: "📝 შეიყვანეთ თქვენი მიზანის სახელი:",
+    specific: "🎯 S: კონკრეტულად რას მინდა მივაღწიო?",
+    measureable: "📊 M: როგორ მივხვდები, რომ მივაღწიე მიზანს?",
+    achievable: "✅ A: რეალურია ეს მიზანი ჩემთვის თუ არა?",
+    relevant: "💖 R: რატომ არის ეს მიზანი ჩემთვის მნიშვნელოვანი?",
+    timebound: "⏰ T: როდის მინდა რომ მივაღწიო ამ მიზანს?",
+    plan: "🛠️ აღწერეთ სამოქმედო გეგმა"
 };
-
-const SMART_EXAMPLES = {
-    "name": "მაგალითი: 'ფიზიკური ფორმის გაუმჯობესება 3 თვის განმავლობაში'",
-    "specific": "მაგალითი: 'ვაპირებ კვირაში 3 ჯერ 30 წუთი სირბილს'",
-    "measureable": "მაგალითი: 'შევძლებ 5 კმ გაჩერების გარეშე სირბილს'",
-    "achievable": "მაგალითი: 'ჩემი არსებული ფორმით ეს რეალურია'",
-    "relevant": "მაგალითი: 'ჯანმრთელობა და ენერგია სამუშაოსთვის მნიშვნელოვანია'",
-    "timebound": "მაგალითი: '3 თვის განმავლობაში'",
-    "plan": "მაგალითი: 'შევადგინო ვარჯიშის გრაფიკი, დავაკვირდე პროგრესს'"
+let SMART_EXAMPLES = {
+    name: "მაგალითი: 'ფიზიკური ფორმის გაუმჯობესება 3 თვეში'",
+    specific: "მაგალითი: 'ვიქნები ვარჯიშში 3 დღე კვირაში, 30 წუთი'",
+    measureable: "მაგალითი: '5 კმ გავირბენ უპრობლემოდ'",
+    achievable: "მაგალითი: 'ჩემთვის ეს რეალურია'",
+    relevant: "მაგალითი: 'ჯანმრთელობა მნიშვნელოვანია'",
+    timebound: "მაგალითი: '3 თვის შემდეგ'",
+    plan: "მაგალითი: 'ვაკეტავ განრიგს, ვადევნებ პროგრესს'"
 };
 
 let currentGoal = {};
 let stepIndex = 0;
-let savedGoals = JSON.parse(localStorage.getItem("goals") || "[]");
+let goals = [];
 
 function startGoal() {
     stepIndex = 0;
@@ -42,37 +41,36 @@ function showStep() {
 }
 
 function submitStep() {
+    const input = document.getElementById("goal-input").value.trim();
     const step = GOAL_STEPS[stepIndex];
-    const value = document.getElementById("goal-input").value.trim();
-    if (!value) return alert("გთხოვთ შეიყვანოთ ტექსტი!");
+    if(input === "") return alert("გთხოვთ შეავსოთ ველი!");
+    currentGoal[step] = input;
 
-    currentGoal[step] = value;
     stepIndex++;
-
-    if (stepIndex < GOAL_STEPS.length) {
+    if(stepIndex < GOAL_STEPS.length) {
         showStep();
     } else {
-        saveGoal();
+        goals.push(currentGoal);
+        showGoals();
     }
 }
 
-function saveGoal() {
-    savedGoals.push({ ...currentGoal, progress: 0 });
-    localStorage.setItem("goals", JSON.stringify(savedGoals));
-    document.getElementById("game-container").innerHTML = `
-        <h2>მიზანი შენახულია!</h2>
-        <pre>${JSON.stringify(currentGoal, null, 2)}</pre>
-        <button onclick="startGoal()">დამატება კიდევ ერთი მიზანი</button>
-        <button onclick="showGoals()">მიზნების ჩვენება</button>
-    `;
-}
-
 function showGoals() {
-    let html = "<h2>თქვენი მიზნები:</h2>";
-    savedGoals.forEach((goal, i) => {
-        html += `<h3>${i + 1}. ${goal.name}</h3><p>პროგრესი: ${goal.progress}%</p>`;
-        html += `<pre>${JSON.stringify(goal, null, 2)}</pre>`;
+    if(goals.length === 0) {
+        document.getElementById("game-container").innerHTML = `
+            <button onclick="startGoal()">დამატება ახალი მიზანი</button>
+            <button onclick="showGoals()">მიზნების ჩვენება</button>
+            <p>მიზნები ჯერ არ არის დამატებული</p>
+        `;
+        return;
+    }
+
+    let html = `<h2>თქვენი მიზნები</h2>`;
+    goals.forEach((g, i) => {
+        html += `<pre>${i+1}. ${JSON.stringify(g, null, 2)}</pre>`;
     });
-    html += `<button onclick="startGoal()">მიზნის დამატება</button>`;
+    html += `<button onclick="startGoal()">დამატება ახალი მიზანი</button>`;
+    html += `<button onclick="showGoals()">მიზნების ჩვენება</button>`;
+
     document.getElementById("game-container").innerHTML = html;
 }

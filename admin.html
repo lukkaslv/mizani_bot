@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - ლუკა სულავა</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { font-family: 'Noto Sans Georgian', sans-serif; background: #f0f4f8; margin: 0; padding: 2rem; }
+  header { display: none; } /* скрываем навигацию для админа */
+  .hidden { display: none; }
+  .admin-container { max-width: 600px; margin: auto; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); animation: fadeIn 1s ease; }
+  h2 { text-align: center; margin-bottom: 1rem; }
+  input { display: block; width: 100%; padding: 0.8rem; margin: 0.5rem 0; border-radius: 8px; border: 1px solid #ccc; }
+  button { padding: 0.7rem 1.2rem; margin-top: 0.5rem; border: none; border-radius: 50px; background: #0077cc; color: white; cursor: pointer; transition: transform 0.2s; }
+  button:hover { transform: scale(1.05); }
+  ul { list-style: none; padding: 0; margin-top: 1rem; }
+  li { background: #e8f0fe; margin: 0.5rem 0; padding: 0.8rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .delete-btn { background: red; padding: 0.3rem 0.6rem; border-radius: 5px; font-size: 0.9rem; }
+  @keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+</style>
+</head>
+<body>
+
+<div id="loginDiv" class="admin-container">
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="error" style="color:red; text-align:center;"></p>
+</div>
+
+<div id="adminDiv" class="hidden admin-container">
+  <h2>Admin Panel</h2>
+
+  <input type="text" id="projectTitle" placeholder="Project Title">
+  <input type="text" id="projectDesc" placeholder="Project Description">
+  <input type="text" id="projectImg" placeholder="Image filename (e.g., project1.jpg)">
+  <button onclick="addProject()">Add Project</button>
+
+  <h3>Projects:</h3>
+  <ul id="projectList"></ul>
+
+  <button onclick="logout()" style="background:#555;">Logout</button>
+</div>
+
+<script>
+  const USER = "admin";
+  const PASS = "1234"; // Только для локального использования
+
+  function login() {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+    if(user === USER && pass === PASS){
+      document.getElementById("loginDiv").classList.add("hidden");
+      document.getElementById("adminDiv").classList.remove("hidden");
+      loadProjects();
+    } else {
+      document.getElementById("error").textContent = "Неверный логин или пароль";
+    }
+  }
+
+  function logout() {
+    document.getElementById("loginDiv").classList.remove("hidden");
+    document.getElementById("adminDiv").classList.add("hidden");
+  }
+
+  function addProject() {
+    const title = document.getElementById("projectTitle").value;
+    const desc = document.getElementById("projectDesc").value;
+    const img = document.getElementById("projectImg").value;
+    if(title && desc){
+      const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+      projects.push({title, desc, img});
+      localStorage.setItem("projects", JSON.stringify(projects));
+      loadProjects();
+      document.getElementById("projectTitle").value = "";
+      document.getElementById("projectDesc").value = "";
+      document.getElementById("projectImg").value = "";
+    }
+  }
+
+  function deleteProject(index) {
+    const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+    projects.splice(index,1);
+    localStorage.setItem("projects", JSON.stringify(projects));
+    loadProjects();
+  }
+
+  function loadProjects() {
+    const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+    const list = document.getElementById("projectList");
+    list.innerHTML = "";
+    projects.forEach((p,i) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span>${p.title} - ${p.desc} (${p.img || 'no image'})</span>
+                      <button class="delete-btn" onclick="deleteProject(${i})">Delete</button>`;
+      list.appendChild(li);
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -37,11 +37,11 @@ function showStep() {
         <h2 class="fade-in">${prompt}</h2>
         <input class="fade-in" type="text" id="goal-input" placeholder="${example}" />
         <div class="buttons">
-            <button class="fade-in submit-step">დახარისხება</button>
+            <button class="submit-step fade-in">დახარისხება</button>
         </div>
     `;
 
-    // Назначаем событие кнопке после перерисовки
+    // Назначаем обработчик кнопке после перерисовки
     document.querySelector(".submit-step").addEventListener("click", submitStep);
 }
 
@@ -93,14 +93,13 @@ function showGoals() {
 
     document.getElementById("game-container").innerHTML = html;
 
-    // Назначаем события кнопкам после перерисовки
-    attachButtons();
-}
-
-function attachButtons() {
+    // Назначаем обработчики кнопкам после перерисовки
     document.querySelectorAll(".start-goal").forEach(btn => btn.addEventListener("click", startGoal));
     document.querySelectorAll(".show-goals").forEach(btn => btn.addEventListener("click", showGoals));
 }
 
-// Инициализация
-attachButtons();
+// Инициализация для первых кнопок
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".start-goal").forEach(btn => btn.addEventListener("click", startGoal));
+    document.querySelectorAll(".show-goals").forEach(btn => btn.addEventListener("click", showGoals));
+});

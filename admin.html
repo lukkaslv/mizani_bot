@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="style.css">
 <style>
   body { font-family: 'Noto Sans Georgian', sans-serif; background: #f0f4f8; margin: 0; padding: 2rem; }
-  header { display: none; } /* скрываем навигацию для админа */
+  header { display: none; }
   .hidden { display: none; }
   .admin-container { max-width: 600px; margin: auto; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); animation: fadeIn 1s ease; }
   h2 { text-align: center; margin-bottom: 1rem; }
@@ -35,7 +35,7 @@
 
   <input type="text" id="projectTitle" placeholder="Project Title">
   <input type="text" id="projectDesc" placeholder="Project Description">
-  <input type="text" id="projectImg" placeholder="Image filename (e.g., project1.jpg)">
+  <input type="text" id="projectImg" placeholder="Image URL (https://...)">
   <button onclick="addProject()">Add Project</button>
 
   <h3>Projects:</h3>
@@ -46,7 +46,7 @@
 
 <script>
   const USER = "admin";
-  const PASS = "1234"; // Только для локального использования
+  const PASS = "1234"; // Локально
 
   function login() {
     const user = document.getElementById("username").value;
@@ -69,6 +69,7 @@
     const title = document.getElementById("projectTitle").value;
     const desc = document.getElementById("projectDesc").value;
     const img = document.getElementById("projectImg").value;
+
     if(title && desc){
       const projects = JSON.parse(localStorage.getItem("projects") || "[]");
       projects.push({title, desc, img});

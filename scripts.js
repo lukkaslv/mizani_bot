@@ -34,16 +34,18 @@ function showStep() {
     const example = SMART_EXAMPLES[step];
 
     document.getElementById("game-container").innerHTML = `
-        <h2>${prompt}</h2>
-        <input type="text" id="goal-input" placeholder="${example}" />
-        <button onclick="submitStep()">დახარისხება</button>
+        <h2 class="fade-in">${prompt}</h2>
+        <input class="fade-in" type="text" id="goal-input" placeholder="${example}" />
+        <div class="buttons">
+            <button class="fade-in" onclick="submitStep()">დახარისხება</button>
+        </div>
     `;
 }
 
 function submitStep() {
     const input = document.getElementById("goal-input").value.trim();
-    const step = GOAL_STEPS[stepIndex];
     if(input === "") return alert("გთხოვთ შეავსოთ ველი!");
+    const step = GOAL_STEPS[stepIndex];
     currentGoal[step] = input;
 
     stepIndex++;
@@ -56,21 +58,31 @@ function submitStep() {
 }
 
 function showGoals() {
+    let html = `<h2 class="fade-in">თქვენი მიზნები</h2>`;
+
     if(goals.length === 0) {
-        document.getElementById("game-container").innerHTML = `
-            <button onclick="startGoal()">დამატება ახალი მიზანი</button>
-            <button onclick="showGoals()">მიზნების ჩვენება</button>
-            <p>მიზნები ჯერ არ არის დამატებული</p>
-        `;
-        return;
+        html += `<p class="fade-in">მიზნები ჯერ არ არის დამატებული</p>`;
+    } else {
+        goals.forEach((g, i) => {
+            html += `
+            <div class="goal-card fade-in">
+                <strong>${i+1}. ${g.name}</strong>
+                <div class="goal-field"><strong>🎯 S:</strong> ${g.specific}</div>
+                <div class="goal-field"><strong>📊 M:</strong> ${g.measureable}</div>
+                <div class="goal-field"><strong>✅ A:</strong> ${g.achievable}</div>
+                <div class="goal-field"><strong>💖 R:</strong> ${g.relevant}</div>
+                <div class="goal-field"><strong>⏰ T:</strong> ${g.timebound}</div>
+                <div class="goal-field"><strong>🛠️ გეგმა:</strong> ${g.plan}</div>
+            </div>`;
+        });
     }
 
-    let html = `<h2>თქვენი მიზნები</h2>`;
-    goals.forEach((g, i) => {
-        html += `<pre>${i+1}. ${JSON.stringify(g, null, 2)}</pre>`;
-    });
-    html += `<button onclick="startGoal()">დამატება ახალი მიზანი</button>`;
-    html += `<button onclick="showGoals()">მიზნების ჩვენება</button>`;
+    html += `
+        <div class="buttons">
+            <button onclick="startGoal()">დამატება ახალი მიზანი</button>
+            <button onclick="showGoals()">მიზნების ჩვენება</button>
+        </div>
+    `;
 
     document.getElementById("game-container").innerHTML = html;
 }

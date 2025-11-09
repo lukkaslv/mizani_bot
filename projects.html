@@ -1,38 +1,72 @@
 <!DOCTYPE html>
 <html lang="ka">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>პროექტები - ლუკა სულავა</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>პროექტები - ლუკა სულავა</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .projects { padding: 2rem; max-width: 1000px; margin: auto; }
+  .project-list { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
+  .project { background: white; border-radius: 15px; padding: 1rem; max-width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; text-align: center; }
+  .project:hover { transform: translateY(-5px); }
+  .project img { max-width: 100%; border-radius: 10px; margin-bottom: 0.5rem; }
+</style>
 </head>
 <body>
-  <header>
-    <nav>
-      <ul>
-        <li><a href="index.html">მთავარი</a></li>
-        <li><a href="projects.html">პროექტები</a></li>
-        <li><a href="about.html">მომ შესახებ</a></li>
-      </ul>
-    </nav>
-  </header>
 
-  <section class="projects">
-    <h2>ჩემი პროექტები</h2>
-    <div class="project-list">
-      <!-- Проекты можно добавлять сюда -->
-      <div class="project">
-        <img src="project1.jpg" alt="Project 1">
-        <h3>პროექტის სახელი</h3>
-        <p>მოკლე აღწერა პროექტის შესახებ</p>
-      </div>
-    </div>
-  </section>
+<header>
+  <nav>
+    <ul style="display:flex; justify-content:center; gap:2rem; padding:1rem; background:#f0f4f8;">
+      <li><a href="index.html">მთავარი</a></li>
+      <li><a href="projects.html">პროექტები</a></li>
+      <li><a href="about.html">მომ შესახებ</a></li>
+      <li><a href="admin.html">Admin</a></li>
+    </ul>
+  </nav>
+</header>
 
-  <footer>
-    <p>&copy; 2025 ლუკა სულავა</p>
-  </footer>
+<section class="projects">
+  <h2 style="text-align:center;">ჩემი პროექტები</h2>
+  <div class="project-list" id="projectList">
+    <!-- Проекты будут добавляться сюда через JS -->
+  </div>
+</section>
 
-  <script src="main.js"></script>
+<footer style="text-align:center; padding:2rem; background:#f0f4f8;">
+  <p>&copy; 2025 ლუკა სულავა</p>
+</footer>
+
+<script>
+function loadProjects() {
+  const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+  const list = document.getElementById("projectList");
+  list.innerHTML = "";
+  projects.forEach(p => {
+    const div = document.createElement("div");
+    div.classList.add("project");
+
+    const img = document.createElement("img");
+    img.src = p.img || "placeholder.jpg"; // если картинки нет, ставим заглушку
+    img.alt = p.title;
+
+    const h3 = document.createElement("h3");
+    h3.textContent = p.title;
+
+    const pDesc = document.createElement("p");
+    pDesc.textContent = p.desc;
+
+    div.appendChild(img);
+    div.appendChild(h3);
+    div.appendChild(pDesc);
+
+    list.appendChild(div);
+  });
+}
+
+// Загружаем проекты при открытии страницы
+document.addEventListener('DOMContentLoaded', loadProjects);
+</script>
+
 </body>
 </html>
